@@ -1,0 +1,26 @@
+<html>
+<head>
+  <title>example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="./libgif.js"></script>
+  <script src="./loop-countable-gif.js"></script>
+</head>
+<body>
+  <img src="./Rotating_earth.gif">
+  <p><span>0</span> loops</p>
+  <script>
+  $('img').each(function (i,img_tag) {
+    if (/.*\.gif/.test(img_tag.src)) {
+      var lcg = new loopCountableGif({
+        gif: img_tag,
+        on_end: function(){
+          $('span').text(lcg.current_loops());
+        }
+      });
+      lcg.load();
+    }
+  });
+  </script>
+</body>
+</html>
