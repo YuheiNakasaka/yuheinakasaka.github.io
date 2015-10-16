@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <title>canvas縦書き力技 Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <style type="text/css">
+    #canvas {
+      background-color: #ddd;
+    }
+    </style>
+  </head>
+  <body onload="start();">
+    <canvas id="canvas"></canvas>
+  <script>
+  var fontSize = 30;
+  var width = $(window).width();
+  var height = 4500;
+  var x = (width/2)-fontSize;
+  var y = 40;
+  var margin = 5;
+
+  function start() {
+    // 生成GIFのメインcanvas
+    var canvas = $("#canvas")[0];
+    var context = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    _reset(context);
+    _verticalWrite(context);
+  }
+
+  function _verticalWrite (ctx) {
+    var textList = "ぉωTょレヽTょレヽ＜世レニτ〃ヵゝレナゑωτ〃￡ヵゝ？(＊・艸・)プ世ω世レヽ体育祭(≠τ＜яёTょレヽωτ〃￡ヵゝァ??ぅちら黄組ゐT=〃ヵゝら応援Ｕτ＜T=〃±レヽЙё★先生レ￡Tょレニ＜〃ゐTょωτ〃￡ヵゝ？ヵゝぇッτ(≠T=ら∧ωＵ〃∋ЗＵ＜".split('\n');
+    var lineHeight = ctx.measureText("あ").width+margin;
+    textList.forEach(function(elm, i) {
+      [].forEach.call(elm, function(ch, j) {
+        ctx.fillStyle = "rgba(0,0,0,1)"; // 文字色
+        if(ch.match(/「|『/) !== null) {
+          // 鍵かっこ始まり
+          ctx.fillText(ch, x-lineHeight*0.5, y+lineHeight*j);
+        } else if(ch.match(/」|』/) !== null) {
+          // 鍵かっこ終わり
+          ctx.fillText(ch, x+lineHeight*0.6, y+lineHeight*j);
+        } else if(ch.match(/、|。|,|\./) !== null) {
+          // 点系
+          ctx.fillText(ch, x+lineHeight*0.6, y+lineHeight*j);
+        } else if (ch.match(/\||i|l|I|!/) !== null) {
+          // 縦棒系
+          ctx.fillText(ch, x+lineHeight*0.25, y+lineHeight*j);
+        } else if (ch.match(/ー|ー|－|―|〜|~/) !== null) {
+          // 回転縦棒系
+          ctx.save();
+          ctx.translate(x,y+lineHeight*(j-1));
+          ctx.rotate(Math.PI/2);
+          ctx.fillText(ch, 5, -2);
+          ctx.restore();
+        } else if (ch.match(/\(|\)|\[|\]|【|】/) !== null) {
+          // 回転括弧系
+          ctx.save();
+          ctx.translate(x,y+lineHeight*(j-1));
+          ctx.rotate(Math.PI/2);
+          ctx.fillText(ch, 5, -4.5);
+          ctx.restore();
+        } else if (ch.match(/=/) !== null) {
+          // 回転イコール
+          ctx.save();
+          ctx.translate(x,y+lineHeight*(j-1));
+          ctx.rotate(Math.PI/2);
+          ctx.fillText(ch, 10, -4);
+          ctx.restore();
+        } else if (ch.match(/[0-9a-zA-Z&%$#"']+/) != null) {
+          // 半角とか
+          ctx.fillText(ch, x+lineHeight*0.1, y+lineHeight*j);
+        } else {
+          // その他
+          ctx.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+        }
+      });
+    });
+  };
+
+  function _reset (ctx) {
+    ctx.clearRect(0,0,width,height);
+    ctx.font = fontSize + "px HGS明朝E";
+    ctx.fillStyle = "rgba(255,255,255,1)"; // 文字色
+    ctx.textAlign = 'left';
+    ctx.lineWidth = 2; // 枠線の太さ
+    ctx.lineJoin = 'round'; // アンチエイリアスっぽいやつ
+    ctx.fillRect(0,0,width,height);
+  }
+  </script>
+  </body>
+</html>
