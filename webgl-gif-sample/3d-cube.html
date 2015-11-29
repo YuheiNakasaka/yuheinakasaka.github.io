@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>立方体_テクスチャ</title>
+        <meta charset="UTF-8">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script src="http://img.gifmagazine.net/gifmagazine/000assets/js/gif.js"></script>
+        <style>
+            body {
+                margin: 0px;
+                background-color: #000000;
+                overflow: scroll;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="canvas_frame"></div>
+        <div id="target"></div>
+        <script>
+
+            var canvasFrame, camera, scene, renderer;
+            var object;
+            var gif, timer, frame;
+            var textureImagePath = './converters/images/1_blackjack/template_png/1/1_1.png';
+            var workerJsPath = './converters/gif.worker.js';
+
+            init();         // 基本的な設定を初期化
+            init_camera();  // カメラを初期化
+            init_object();  // オブジェクトを初期化
+            init_gif();
+            animate();      // アニメーションを描画
+
+            function init() {
+                frame = 0;
+                // キャンバスフレームDOM要素の取得
+                canvasFrame = document.getElementById('canvas_frame');
+                // レンダラーを作成
+                renderer = new THREE.WebGLRenderer();
+                // canvas要素のサイズを設定
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                // 背景色を設定
+                renderer.setClearColor(0xEEEEEE, 1.0);
+                // body要素にcanvas要素を追加
+                canvasFrame.appendChild( renderer.domElement );
+                // シーンの作成
+                scene = new THREE.Scene();
+                // ウインドウサイズが変更された際のイベントを登録
+                window.addEventListener( 'resize', onWindowResize, false );
+            }
+
+            function init_camera(){
+                // カメラを作成
+                camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 1000 );
+                // カメラの位置を設定
+                camera.position.set(100,100,100);
+                // カメラの向きを設定
+                camera.lookAt( {x: 0, y: 0, z: 0} );
+            }
+
+            function init_object(){
+                // 立方体の作成
+                var geometry = new THREE.BoxGeometry( 100,100,100 );
+                // テクスチャの作成
+                var texture = THREE.ImageUtils.loadTexture( textureImagePath );
+                texture.anisotropy = renderer.getMaxAnisotropy();
+                // マテリアルオブジェクトを作成
+                var material = new THREE.MeshBasicMaterial( { map: texture } );
+                // オブジェクトを作成
+                object = new THREE.Mesh( geometry, material );
+                // シーンにオブジェクトを追加
+                scene.add( object );
+            }
+
+            function init_gif(){
+              // gif生成オブジェクト
+              gif = new GIF({
+                workers: 10,
+                quality: 10,
+                workerScript: workerJsPath
+              });
+              gif.setOptions({width: renderer.domElement.width, height: renderer.domElement.height });
+              setTimeout(function(){
+                window.cancelAnimationFrame(timer);
+                // gif生成処理
+                gif.on('finished', function(blob) {
+                  var url = window.URL || window.webkitURL;
+                  var blobURL = url.createObjectURL(blob);
+                  var target = document.getElementById("target");
+                  var img = document.createElement('img');
+                  img.src = blobURL;
+                  target.appendChild(img);
+                });
+                gif.render();
+              }, 6000);
+            }
+
+            function onWindowResize() {
+                // アスペクト比を設定
+                camera.aspect = window.innerWidth / window.innerHeight;
+                // カメラの設定を更新
+                camera.updateProjectionMatrix();
+                // canvas要素のサイズを設定
+                renderer.setSize( window.innerWidth, window.innerHeight );
+            }
+
+            function animate() {
+                // アニメーション
+                timer = requestAnimationFrame( animate );
+                // オブジェクトを回転
+                object.rotation.x += 0.005;
+                object.rotation.y += 0.01;
+                frame++;
+                // レンダリング
+                renderer.render( scene, camera );
+                if (frame > 5 && frame % 2 == 0) {
+                  console.log(frame % 30);
+                  gif.addFrame(renderer.domElement, {copy: true, delay: 30});
+                }
+            }
+        </script>
+    </body>
+</html>
+<!-- <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8'>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script>
+    $(document).ready( function() {
+      // Rendererを用意
+      var renderer = new THREE.WebGLRenderer( { 'canvas' : $('#canvas')[0] } );
+
+      // Cameraを用意
+      var camera = new THREE.PerspectiveCamera();
+      camera.position.z = 500;
+
+      // 画像を指定したmaterialの用意
+      var material = new THREE.MeshBasicMaterial( {
+        map:THREE.ImageUtils.loadTexture('./converters/images/1_blackjack/template_png/1/1_1.png', {}, function() {renderer.render(scene, camera);})
+      } );
+
+      // Cubeの用意
+      var geometry = new THREE.SphereGeometry(200);
+      var mesh = new THREE.Mesh( geometry, material );
+      mesh.rotation.y = -1.5;
+
+      // Sceneを用意
+      var scene = new THREE.Scene();
+      scene.add( mesh );
+      console.log(renderer.domElement);
+      // render
+      renderer.render( scene, camera );
+    } );
+  </script>
+</head>
+
+<body>
+  <canvas id="canvas" style="width:300px; height: 300px; border:solid 1px; margin: 30px;">
+    お使いのブラウザは旧石器時代に開発されたものかテキストベースのもののようです。現代の一般的なブラウザを用いて表示してください。
+  </canvas>
+</body>
+
+</html> -->
