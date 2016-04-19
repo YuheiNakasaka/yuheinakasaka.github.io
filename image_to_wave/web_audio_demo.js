@@ -54,11 +54,11 @@ function init(){
   loadBpm();
   document.getElementById('inputImg').addEventListener('change', function(){
     var file = this.files[0];
-    var fileReader = new FileReader();
+    _loadImage(file);
 
+    var fileReader = new FileReader();
     fileReader.onload = function(e) {
       document.getElementById('imgDiv').setAttribute('src', e.target.result);
-      loadImage(e.target.result);
     };
     fileReader.readAsDataURL(file);
   });
@@ -74,23 +74,20 @@ function renderingStart() {
   parseInput();
 }
 
-function loadImage(imgUrl) {
-  var canvas = document.getElementById('canvas');
-  var ctx = canvas.getContext('2d');
-  var img = new Image();
-  img.src = imgUrl;
-  img.crossOrigin = "Anonymous";
-  img.onload = function() {
-    var scaleW = 10/img.width;
-    var scaleH = 10/img.height;
-    var dstW = img.width * scaleW;
-    var dstH = img.height * scaleH;
-    canvas.width = dstW;
-    canvas.height = dstH;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, this.width, this.height, 0, 0, dstW, dstH);
-  };
+function _loadImage(imgUrl) {
+  loadImage(
+    imgUrl,
+    function(elm){
+      elm.setAttribute('id', 'canvas');
+      document.getElementById('displayDiv').appendChild(elm);
+    },
+    {
+      maxWidth: 20,
+      maxHeight: 20,
+      crossOrigin: 'Anonymous',
+      canvas: true
+    }
+  )
 }
 
 function loadBpm() {

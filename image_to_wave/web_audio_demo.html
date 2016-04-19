@@ -3,6 +3,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>画像から音を鳴らす(web audio version)</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.6.1/load-image.min.js"></script>
 <script src="web_audio_demo.js"></script>
 <style type="text/css">
   #wrap {
@@ -43,6 +44,7 @@
     <h1>画像から音を鳴らす</h1>
     <p class="desc">画像のピクセルごとのRGB値の平均をキー(C~B)+適当なオクターブ内に収まるように対応付けし、web audioで再生する。程よく音が重なったりするようにbpbを調整してる。試すにはファイル選択をして画像を選び、再生を押す。</p>
     <img src id="imgDiv" crossorigin='Anonymous'>
+    <div id="displayDiv"></div>
   <br>
     <input type="file" id="inputImg" accept="image/*">
   <br>
@@ -60,7 +62,6 @@
     <p class="detailTitle">詳細</p>
     <textarea id="detail"></textarea>
     <div id="audioStream"></div>
-    <canvas id="canvas"></canvas>
 
   <br>
     <small>Created by <a href="http://twitter.com/razokulover" target="_blank">@razokulover</a></small>
