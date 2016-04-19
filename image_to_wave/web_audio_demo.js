@@ -49,9 +49,10 @@ function init(){
   // crate pitch
   createPitchList();
   // img load
-  var bimgUrl = "http://img.gifmagazine.net/gifmagazine/000thumbnail/images/4/thumb.png";
-  loadImage(bimgUrl);
+  var bimgUrl = qs.url || "http://img.gifmagazine.net/gifmagazine/000thumbnail/images/4/thumb.png";
+  // load bpm
   loadBpm();
+  bpm = qs.bpm || 60;
   document.getElementById('inputImg').addEventListener('change', function(){
     var file = this.files[0];
     var fileReader = new FileReader();
@@ -208,3 +209,22 @@ function convertToPitch(key){
   if(f) return f;
   else return 220.0;
 }
+
+// copy
+var qs = function () {
+  var query_string = {};
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+    if (typeof query_string[pair[0]] === "undefined") {
+      query_string[pair[0]] = decodeURIComponent(pair[1]);
+    } else if (typeof query_string[pair[0]] === "string") {
+      var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+      query_string[pair[0]] = arr;
+    } else {
+      query_string[pair[0]].push(decodeURIComponent(pair[1]));
+    }
+  }
+  return query_string;
+}();
