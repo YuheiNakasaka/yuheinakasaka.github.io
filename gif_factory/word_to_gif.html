@@ -1,0 +1,62 @@
+<html>
+<head>
+  <title>word -> gif </title>
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+  <script src="https://gifmagazine-dea.kxcdn.com/gifmagazine/000assets/js/gif.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.6.1/load-image.min.js"></script>
+  <script src="gif_factory.js"></script>
+  <style>
+  a, img, input {
+    display: block;
+  }
+  </style>
+</head>
+<body>
+  <div id="pic-to-gif-wrap">
+    <div id="pic-to-gif-display">
+      <img src="" id="pic-to-gif-display-img">
+    </div>
+    <input type="file" accept="image/*" id="pic-to-gif-file">
+    <input type="text" accept="image/*" id="pic-to-gif-text">
+    <canvas id="pic-to-gif-main-canvas"></canvas>
+  </div>
+  <script>
+    window.onload = function() {
+      $("#pic-to-gif-file").on('change', function(){
+        // wordToGif can move given texts depending on motionList
+        // user uploaded image + text
+        var motionList = [];
+        var x = -290;
+        for (var i = 0; i < 10; i++) {
+          motionList.push({"frame":1,"x": x,"y":40,"rotX":0,"rotY":0,"rotZ":0,"sX":1,"sY":1,"opacity":1})
+          x += 35;
+        }
+        var options = {
+          wordToGifOption: {
+            delay: 500,
+            repeat: 0,  // default: auto loop
+            width:  290,
+            height:  300,
+            motionList: motionList,
+            callbackAfterGeneration: function(args) {$("#pic-to-gif-display-img").attr("src", args.b64data)},
+            frameHandler: function(args) {
+              args.ctx.drawImage(args.option.uploadElm, 0, 0, args.option.width, args.option.height);
+              args.ctx.font = "bold 129% " + '"ヒラギノ丸ゴ Pro W4","ヒラギノ丸ゴ Pro","Hiragino Maru Gothic Pro","ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","HG丸ｺﾞｼｯｸM-PRO","HGMaruGothicMPRO"';
+              args.ctx.strokeStyle = "rgba(0,0,0,1)";
+              args.ctx.fillStyle = "rgba(255,241,5,1)";
+              args.ctx.textAlign = 'left';
+              args.ctx.strokeText(args.option.text,args.motion.x,args.motion.y,300);
+              args.ctx.fillText(args.option.text,args.motion.x,args.motion.y,300);
+            }
+          },
+          inputFileElm: "#pic-to-gif-file",
+          inputTextElm: "#pic-to-gif-text"
+        };
+        var gif_factory = new GifFactory();
+        gif_factory.init(options);
+        gif_factory.wordToGif();
+      });
+    }
+  </script>
+</body>
+</html>
