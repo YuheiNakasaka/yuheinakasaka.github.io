@@ -1,0 +1,96 @@
+<html>
+<head>
+  <title>frame -> gif </title>
+  <script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+  <script src="https://gifmagazine-dea.kxcdn.com/gifmagazine/000assets/js/gif.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.6.1/load-image.min.js"></script>
+  <script src="gif_factory.js"></script>
+  <script src="./clmtrackr/model_pca_20_svm.js"></script>
+  <script src="./clmtrackr/clmtrackr.js"></script>
+  <style>
+  a, img, input {
+    display: block;
+  }
+  </style>
+</head>
+<body>
+  <div id="pic-to-gif-wrap">
+    <div id="pic-to-gif-display">
+      <img src="" id="pic-to-gif-display-img">
+    </div>
+    <input type="file" accept="image/*" id="pic-to-gif-file">
+    <canvas id="pic-to-gif-main-canvas"></canvas>
+    <img src="frame.png" class="frames">
+    <img src="frame.png" class="frames">
+    <img src="frame.png" class="frames">
+  </div>
+  <script>
+    window.onload = function() {
+      var drawRequest;
+      var mouthPosition;
+      var ctrack = new clm.tracker({stopOnConvergence : true});
+      ctrack.init(pModel);
+
+      $("#pic-to-gif-file").on('change', function(){
+        mouthPosition = null;
+        loadImage(
+          $(this)[0].files[0],
+          function(img) {
+            $(img).attr("id", "target-image");
+            $("body").append(img);
+            ctrack.start(document.getElementById("target-image"));
+            drawLoop();
+            function drawLoop() {
+              drawRequest = requestAnimationFrame(drawLoop);
+              if (ctrack.getCurrentPosition()) {
+                mouthPosition = ctrack.getCurrentPosition();
+              }
+            }
+          },
+          {
+            maxWidth: 500,
+            canvas: true
+          }
+        );
+      });
+
+
+      // detect if tracker has converged
+      document.addEventListener("clmtrackrConverged", function(event) {
+        cancelRequestAnimFrame(drawRequest);
+        // generate gif with frames
+        var options = {
+          frameToGifOption: {
+            delay: 150,
+            repeat: 0,  // default: auto loop
+            width:  500,
+            height:  500,
+            images: $(".frames"),
+            callbackAfterGeneration: function(args) {$("#pic-to-gif-display-img").attr("src", args.b64data)},
+            frameHandler: function(args) {
+              console.log(mouthPosition[44][0], mouthPosition[44][1]);
+              args.ctx.drawImage(args.option.uploadElm, 0, 0, args.option.width, args.option.height);
+              args.ctx.drawImage(args.img, mouthPosition[44][0], mouthPosition[44][1], 50, 50);
+            }
+          },
+          inputFileElm: "#pic-to-gif-file"
+        };
+        var gif_factory = new GifFactory();
+        gif_factory.init(options);
+        gif_factory.frameToGif();
+      }, false);
+
+    };
+
+
+    window.cancelRequestAnimFrame = ( function() {
+        return window.cancelAnimationFrame          ||
+            window.webkitCancelRequestAnimationFrame    ||
+            window.mozCancelRequestAnimationFrame       ||
+            window.oCancelRequestAnimationFrame     ||
+            window.msCancelRequestAnimationFrame        ||
+            clearTimeout
+    } )();
+  </script>
+</body>
+</html>
