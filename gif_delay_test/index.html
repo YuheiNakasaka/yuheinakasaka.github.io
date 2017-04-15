@@ -5,35 +5,54 @@
     <title>gif delay test</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <style>
+    #wrap {
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 20px;
+    }
     .section {
-      margin-bottom: 10px;
+      width: 300px;
+      text-align: center;
+      float: left;
     }
     </style>
   </head>
   <body>
-    <div class="section">
-      <p>10ms</p>
-      <img src="images/10ms.gif">
+    <div id="wrap">
+      <h1 id="browser-name"></h1>
+      <div class="section">
+        <p>100ms</p>
+        <img src="images/100ms.gif">
+      </div>
+      <div class="section">
+        <p>10ms</p>
+        <img src="images/10ms.gif">
+      </div>
+      <div class="section">
+        <p>20ms</p>
+        <img src="images/20ms.gif">
+      </div>
+      <div class="section">
+        <p>30ms</p>
+        <img src="images/30ms.gif">
+      </div>
+      <div class="section">
+        <p>40ms</p>
+        <img src="images/40ms.gif">
+      </div>
+      <div class="section">
+        <p>50ms</p>
+        <img src="images/50ms.gif">
+      </div>
+      <div class="section">
+        <p>60ms</p>
+        <img src="images/60ms.gif">
+      </div>
     </div>
-    <div class="section">
-      <p>20ms</p>
-      <img src="images/20ms.gif">
-    </div>
-    <div class="section">
-      <p>30ms</p>
-      <img src="images/30ms.gif">
-    </div>
-    <div class="section">
-      <p>40ms</p>
-      <img src="images/40ms.gif">
-    </div>
-    <div class="section">
-      <p>50ms</p>
-      <img src="images/50ms.gif">
-    </div>
-    <div class="section">
-      <p>60ms</p>
-      <img src="images/60ms.gif">
-    </div>
+  <script>
+  var h1 = document.getElementById('browser-name');
+  h1.innerText = navigator.appVersion;
+  </script>
   </body>
 </html>
