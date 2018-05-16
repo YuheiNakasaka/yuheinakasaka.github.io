@@ -189,16 +189,8 @@ window.onload = function() {
 
   document.getElementById('fullBtn').addEventListener('click', function(){
     var wrap = document.querySelector('body')
-    if(document.fullscreenEnabled) {
-        wrap.requestFullscreen()
-    } else if(document.webkitFullscreenEnabled) {
-        wrap.webkitRequestFullscreen()
-    } else if(document.mozFullScreenEnabled) {
-        wrap.mozRequestFullScreen();
-    } else if(document.msFullscreenEnabled) {
-        wrap.msRequestFullscreen();
-    } else {
-        alert('not available!');
+    if (screenfull.enabled) {
+      screenfull.request(wrap);
     }
   })
 }
