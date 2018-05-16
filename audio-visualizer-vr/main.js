@@ -186,4 +186,9 @@ window.onload = function() {
     var loader = new Loader('./DJSnake-Turn-Down-for-What-(ParisianVersion)-(no-rights-reserved!)-149855329.mp3')
     loader.playSound()
   })
+
+  document.getElementById('fullBtn').addEventListener('click', function(){
+    var wrap = document.querySelector('body')
+    wrap.webkitRequestFullscreen();
+  })
 }
